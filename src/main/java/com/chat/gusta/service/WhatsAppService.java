@@ -1,11 +1,16 @@
 package com.chat.gusta.service;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -26,30 +31,43 @@ public class WhatsAppService {
         return n + "@c.us";
     }
 
-    public String sendMessage(String instanceName, String to, String message) {
-        String url = baseUrl + "/send/" + instanceName;
+    public String sendMessage(String instanceName, String to, String message, MultipartFile image) {
+        try {
+            String url = baseUrl + "/send/" + instanceName;
+            String formattedNumber = formatNumber(to);
 
-        // Formata o número antes de enviar
-        String formattedNumber = formatNumber(to);
+            HttpHeaders headers = new HttpHeaders();
 
-        System.out.println("[JAVA] Enviando mensagem...");
-        System.out.println("Número original: " + to);
-        System.out.println("Número formatado: " + formattedNumber);
-        System.out.println("Mensagem: " + message);
+            if (image != null && !image.isEmpty()) {
+                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+                body.add("toNumber", formattedNumber);
+                if (message != null) body.add("message", message);
 
-        Map<String, String> body = Map.of(
-                "number", formattedNumber,
-                "message", message
-        );
+                body.add("image", new ByteArrayResource(image.getBytes()) {
+                    @Override
+                    public String getFilename() {
+                        return image.getOriginalFilename();
+                    }
+                });
 
-        HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+                return restTemplate.postForObject(url, requestEntity, String.class);
+            } else {
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                Map<String, String> body = Map.of(
+                        "toNumber", formattedNumber,
+                        "message", message != null ? message : ""
+                );
 
-
-
-        return restTemplate.postForObject(url, request, String.class);
+                HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+                return restTemplate.postForObject(url, request, String.class);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Erro ao processar arquivo de imagem: " + e.getMessage();
+        }
     }
 
     public String getStatus(String instance){

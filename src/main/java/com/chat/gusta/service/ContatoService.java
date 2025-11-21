@@ -2,13 +2,14 @@ package com.chat.gusta.service;
 
 
 import com.chat.gusta.model.Contatos;
+import com.chat.gusta.repository.ContatoRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ContatoService {
 
 
-    private final  ContatoRepository contatoRepository;
+    private final ContatoRepository contatoRepository;
 
     public ContatoService(ContatoRepository contatoRepository) {
         this.contatoRepository = contatoRepository;

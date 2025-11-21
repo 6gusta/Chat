@@ -12,12 +12,18 @@ public class WhatsAppMessage {
     private Long idhistorico;
 
     private String toNumber; // Destinatário
-
+    private String instancia;
     @Column(name = "from_number") // mapeia o campo para a coluna "from_number"
     private String fromNumber; // Remetente
 
     private String content; // Texto da mensagem
     private String type; // sent / received
+    private LocalDateTime horario;
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private  byte[] image;
+    private String imageName; // nome do arquivo
+    private String imageType;
 
 
 
@@ -46,5 +52,45 @@ public class WhatsAppMessage {
     }
     public void setToNumber(String toNumber) {
         this.toNumber = toNumber;
+    }
+
+    public LocalDateTime getHorario() {
+        return horario;
+    }
+
+    public void setHorario(LocalDateTime horario) {
+        this.horario = horario;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public String getImageType() {
+        return imageType;
+    }
+
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
+
+    public String getInstancia() {
+        return instancia;
+    }
+
+    public void setInstancia(String instancia) {
+        this.instancia = instancia;
     }
 }

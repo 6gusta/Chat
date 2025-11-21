@@ -1,4 +1,4 @@
-package com.chat.gusta.service;
+package com.chat.gusta.repository;
 
 import com.chat.gusta.model.Contatos;
 import org.springframework.data.jpa.repository.JpaRepository;
