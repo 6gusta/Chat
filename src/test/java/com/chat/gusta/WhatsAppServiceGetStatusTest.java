@@ -1,6 +1,6 @@
 package com.chat.gusta;
 
-import com.chat.gusta.service.WhatsAppService;
+import com.chat.gusta.service.WhatsAppServiceRotas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -17,12 +17,12 @@ public class WhatsAppServiceGetStatusTest {
     @Mock
     private RestTemplate restTemplate;
 
-    private WhatsAppService whatsAppService;
+    private WhatsAppServiceRotas whatsAppService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        whatsAppService = new WhatsAppService(restTemplate);
+        whatsAppService = new WhatsAppServiceRotas(restTemplate);
     }
 
     @Test

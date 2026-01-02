@@ -1,13 +1,13 @@
 package com.chat.gusta.service;
 
-
 import com.chat.gusta.model.Contatos;
 import com.chat.gusta.repository.ContatoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ContatoService {
-
 
     private final ContatoRepository contatoRepository;
 
@@ -15,16 +15,25 @@ public class ContatoService {
         this.contatoRepository = contatoRepository;
     }
 
-    public Contatos salvarcontato(String nome, String numero) {
-        if (contatoRepository.existsByNumero(numero)){
-            throw  new RuntimeException(" contato ja existe ");
+    public Contatos salvarContato(String nome, String numero, String instancia) {
+
+        if (contatoRepository.existsByNumero(numero)) {
+            throw new RuntimeException("Contato já existe");
         }
 
-        Contatos contatos = new Contatos();
-        contatos.setNumero(nome);
-        contatos.setNome(numero);
-        return  contatoRepository.save(contatos);
+        Contatos contato = new Contatos();
+        contato.setNome(nome);           // ✅ CERTO
+        contato.setNumero(numero);       // ✅ CERTO
+        contato.setInstancia(instancia); // ✅ VINCULA INSTÂNCIA
+
+        return contatoRepository.save(contato);
     }
 
+    public List<Contatos> listarTodos() {
+        return contatoRepository.findAll();
+    }
 
+    public List<Contatos> listarPorInstancia(String instancia) {
+        return contatoRepository.findByInstancia(instancia);
+    }
 }
