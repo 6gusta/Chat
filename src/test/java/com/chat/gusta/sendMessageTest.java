@@ -1,6 +1,6 @@
 package com.chat.gusta;
 
-import com.chat.gusta.service.WhatsAppService;
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ public class sendMessageTest {
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private WhatsAppService whatsAppService;
+    private WhatsAppServiceRotas whatsAppService;
 
     @BeforeEach
     void setUp() {
