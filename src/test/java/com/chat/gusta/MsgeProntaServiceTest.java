@@ -1,9 +1,9 @@
 package com.chat.gusta;
 
 import com.chat.gusta.model.MessagemPronta;
-import com.chat.gusta.repository.AdicionamsgeRepository;
-import com.chat.gusta.repository.ProntaReposiotory;
-import com.chat.gusta.service.MsgeProntaService;
+import com.chat.gusta.repository.MsgeProntas.MsgeProntasRepository;
+import com.chat.gusta.repository.MsgeProntas.ProntaReposiotory;
+import com.chat.gusta.service.MsgProntas.MsgeProntaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,14 +22,14 @@ public class MsgeProntaServiceTest {
     private ProntaReposiotory prontaReposiotory;
 
     @Mock
-    private AdicionamsgeRepository adicionamsgeRepository;
+    private MsgeProntasRepository msgeProntasRepository;
 
     private MsgeProntaService msgeProntaService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        msgeProntaService = new MsgeProntaService(prontaReposiotory, adicionamsgeRepository);
+        msgeProntaService = new MsgeProntaService(prontaReposiotory, msgeProntasRepository);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class MsgeProntaServiceTest {
         adicionada.setTexto("Adicionada 1");
 
         when(prontaReposiotory.findAll()).thenReturn(Arrays.asList(fixa1, fixa2));
-        when(adicionamsgeRepository.findAll()).thenReturn(List.of(adicionada));
+        when(msgeProntasRepository.findAll()).thenReturn(List.of(adicionada));
 
         List<MessagemPronta> todas = msgeProntaService.listaMessages();
 
@@ -58,7 +58,7 @@ public class MsgeProntaServiceTest {
         assertTrue(todas.contains(adicionada));
 
         verify(prontaReposiotory, times(1)).findAll();
-        verify(adicionamsgeRepository, times(1)).findAll();
+        verify(msgeProntasRepository, times(1)).findAll();
     }
 
 
@@ -68,11 +68,11 @@ public class MsgeProntaServiceTest {
         fixa1.setIdmsg(1L);
         fixa1.setTexto("Do Banco");
 
-        when(adicionamsgeRepository.findById(1L)).thenReturn(Optional.of(fixa1));
+        when(msgeProntasRepository.findById(1L)).thenReturn(Optional.of(fixa1));
 
         MessagemPronta resultado = msgeProntaService.buscaporId(1L);
         assertEquals("Do Banco", resultado.getTexto());
-        verify(adicionamsgeRepository, times(1)).findById(1L);
+        verify(msgeProntasRepository, times(1)).findById(1L);
         verifyNoInteractions(prontaReposiotory);
 
     }
@@ -83,13 +83,13 @@ public class MsgeProntaServiceTest {
         fixa.setIdmsg(2L);
         fixa.setTexto("Fixa");
 
-        when(adicionamsgeRepository.findById(2L)).thenReturn(Optional.empty());
+        when(msgeProntasRepository.findById(2L)).thenReturn(Optional.empty());
         when(prontaReposiotory.findById(2L)).thenReturn(fixa);
 
         MessagemPronta resultado = msgeProntaService.buscaporId(2L);
 
         assertEquals("Fixa", resultado.getTexto());
-        verify(adicionamsgeRepository, times(1)).findById(2L);
+        verify(msgeProntasRepository, times(1)).findById(2L);
         verify(prontaReposiotory, times(1)).findById(2L);
     }
 
@@ -98,24 +98,24 @@ public class MsgeProntaServiceTest {
         MessagemPronta nova = new MessagemPronta();
         nova.setTexto("Nova mensagem");
 
-        when(adicionamsgeRepository.save(any(MessagemPronta.class))).thenReturn(nova);
+        when(msgeProntasRepository.save(any(MessagemPronta.class))).thenReturn(nova);
 
         MessagemPronta resultado = msgeProntaService.adicionar("Nova mensagem");
 
         assertEquals("Nova mensagem", resultado.getTexto());
-        verify(adicionamsgeRepository, times(1)).save(any());
+        verify(msgeProntasRepository, times(1)).save(any());
     }
 
     @Test
     void deveDeletarMensagem_quandoExisteNoBanco() {
 
-        when(adicionamsgeRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(adicionamsgeRepository).deleteById(1L);
+        when(msgeProntasRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(msgeProntasRepository).deleteById(1L);
 
         boolean resultado = msgeProntaService.delProduto(1L);
         assertTrue(resultado);
-        verify(adicionamsgeRepository, times(1)).existsById(1L);
-        verify(adicionamsgeRepository, times(1)).deleteById(1L);
+        verify(msgeProntasRepository, times(1)).existsById(1L);
+        verify(msgeProntasRepository, times(1)).deleteById(1L);
 
 
 
@@ -124,13 +124,13 @@ public class MsgeProntaServiceTest {
 
     @Test
     void naoDeveDeletarMensagem_quandoNaoExiste() {
-        when(adicionamsgeRepository.existsById(1L)).thenReturn(false);
+        when(msgeProntasRepository.existsById(1L)).thenReturn(false);
 
         boolean resultado = msgeProntaService.delProduto(1L);
 
         assertFalse(resultado);
-        verify(adicionamsgeRepository, times(1)).existsById(1L);
-        verify(adicionamsgeRepository, never()).deleteById(anyLong());
+        verify(msgeProntasRepository, times(1)).existsById(1L);
+        verify(msgeProntasRepository, never()).deleteById(anyLong());
     }
     }
 

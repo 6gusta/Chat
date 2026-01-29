@@ -2,8 +2,7 @@ package com.chat.gusta.controller;
 
 
 import com.chat.gusta.model.Contatos;
-import com.chat.gusta.repository.ContatoRepository;
-import com.chat.gusta.service.ContatoService;
+import com.chat.gusta.service.Contatos.ContatoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

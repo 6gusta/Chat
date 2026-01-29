@@ -2,7 +2,7 @@ package com.chat.gusta.controller;
 
 import com.chat.gusta.model.InstanceStatus;
 import com.chat.gusta.model.InstanceStatusResponse;
-import com.chat.gusta.service.WhatsAppServiceRotas;
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

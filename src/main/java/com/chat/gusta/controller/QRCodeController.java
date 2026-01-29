@@ -2,15 +2,14 @@ package com.chat.gusta.controller;
 
 
 import com.chat.gusta.model.WhatsAppInstance;
-import com.chat.gusta.repository.MessageRepository;
+import com.chat.gusta.repository.MensagensRotas.MessageRepository;
 
-import com.chat.gusta.service.ListaTodasInstanciasService;
-import com.chat.gusta.service.WhatsAppServiceRotas;
+import com.chat.gusta.service.Instancias.ListaInstanciasService;
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +24,9 @@ public class QRCodeController {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
     private final WhatsAppServiceRotas whatsAppService;
     private final MessageRepository messageRepository;
-    private final ListaTodasInstanciasService listaTodasIntanciasSerrvice;
+    private final ListaInstanciasService listaTodasIntanciasSerrvice;
 
-    public QRCodeController(WhatsAppServiceRotas whatsAppService, MessageRepository messageRepository, ListaTodasInstanciasService listaTodasIntanciasSerrvice) {
+    public QRCodeController(WhatsAppServiceRotas whatsAppService, MessageRepository messageRepository, ListaInstanciasService listaTodasIntanciasSerrvice) {
 
         this.whatsAppService = whatsAppService;
         this.messageRepository = messageRepository;

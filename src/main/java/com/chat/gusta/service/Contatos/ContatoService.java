@@ -1,7 +1,7 @@
-package com.chat.gusta.service;
+package com.chat.gusta.service.Contatos;
 
 import com.chat.gusta.model.Contatos;
-import com.chat.gusta.repository.ContatoRepository;
+import com.chat.gusta.repository.Contatos.ContatoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

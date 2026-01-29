@@ -2,12 +2,13 @@ package com.chat.gusta.controller;
 
 
 import com.chat.gusta.model.WhatsAppMessage;
-import com.chat.gusta.repository.MessageRepository;
+import com.chat.gusta.repository.MensagensRotas.MessageRepository;
 
-import com.chat.gusta.service.WhatsAppServiceRotas;
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,9 +20,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+//@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/whatsapp")
+@RequestMapping("/admin")
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}, allowCredentials = "true")
 public class WhatsAppController {
 

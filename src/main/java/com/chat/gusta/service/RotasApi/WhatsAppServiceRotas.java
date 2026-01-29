@@ -1,4 +1,4 @@
-package com.chat.gusta.service;
+package com.chat.gusta.service.RotasApi;
 
 
 import com.chat.gusta.model.InstanceStatus;
@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @Service

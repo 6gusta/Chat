@@ -1,4 +1,4 @@
-package com.chat.gusta.repository;
+package com.chat.gusta.repository.MensagensRotas;
 
 import com.chat.gusta.model.WhatsAppMessage;
 import org.springframework.data.jpa.repository.JpaRepository;

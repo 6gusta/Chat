@@ -1,6 +1,6 @@
 package com.chat.gusta;
 
-import com.chat.gusta.service.WhatsAppServiceRotas;
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

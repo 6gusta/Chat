@@ -1,10 +1,10 @@
-package com.chat.gusta.service;
+package com.chat.gusta.service.Instancias;
 
 import com.chat.gusta.model.InstanceStatus;
 import com.chat.gusta.model.InstanciaDTO;
 import com.chat.gusta.model.WhatsAppInstance;
-import com.chat.gusta.repository.InstanceRepository;
-import com.chat.gusta.repository.MessageRepository;
+import com.chat.gusta.repository.Instancias.InstanceRepository;
+import com.chat.gusta.repository.MensagensRotas.MessageRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +17,16 @@ import java.util.Optional;
 
 @Service
 
-public class ListaTodasInstanciasService {
+public class ListaInstanciasService {
 
     private final MessageRepository messageRepository;
     private final RestTemplate restTemplate;
     private final InstanceRepository instanceRepository;
     private final String baseUrl = "http://localhost:3000";
 
-    public ListaTodasInstanciasService(MessageRepository messageRepository,
-                                       RestTemplate restTemplate,
-                                       InstanceRepository instanceRepository) {
+    public ListaInstanciasService(MessageRepository messageRepository,
+                                  RestTemplate restTemplate,
+                                  InstanceRepository instanceRepository) {
         this.messageRepository = messageRepository;
         this.restTemplate = restTemplate;
         this.instanceRepository = instanceRepository;
