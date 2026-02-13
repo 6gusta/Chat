@@ -31,12 +31,13 @@ public class SecurityConfig {
                                         "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                         "/h2-console/**"
-                                        ,"/loginadmin/**", "/user/**",
-                                "/conta/**"
+                                        ,"/loginadmin/**", "/user/**"
+
                                         )
                          .permitAll()
                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/Cadastro/**").hasAnyRole("ADMIN")
+                                .requestMatchers("/conta/**").authenticated()
 
 
 
