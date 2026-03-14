@@ -34,7 +34,15 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+        String apiKey = request.getHeader("X-Internal-Key");
+        System.out.println("🔎 Header X-Internal-Key: " + apiKey);
+        System.out.println("🔎 Path: " + request.getServletPath());
 
+// 🔐 Permitir integração interna (Node API)
+        if (apiKey != null && apiKey.equals("$2a$12$3FcKeUn8l2rxIj0Vh0CI7OP2muaQQzXxoeAygaUuafyF48rdo4xmq")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String path = request.getServletPath();
 
         // ✅ Libera apenas o login

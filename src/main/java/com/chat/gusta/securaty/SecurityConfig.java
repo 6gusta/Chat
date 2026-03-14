@@ -1,6 +1,6 @@
 package com.chat.gusta.securaty;
 
-
+import com.chat.gusta.util.InternalKeyFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,54 +23,59 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
-                http
-                        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                        .csrf(csrf -> csrf.disable())
-                        .authorizeHttpRequests(auth -> auth.requestMatchers("/v3/api-docs/**",
+        http
+                // Configuração de CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Desabilita CSRF
+                .csrf(csrf -> csrf.disable())
+                // Configuração de autorização
+                .authorizeHttpRequests(auth -> auth
+                        // Rotas públicas
+                        .requestMatchers(
+                                "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                        "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                        "/h2-console/**"
-                                        ,"/loginadmin/**", "/user/**"
+                                "/h2-console/**",
+                                "/loginadmin/**"
+                                ,"/api/qr/**",
+                                "/admin/webhook"
+                                ,"/admin/mensagens"
+                                ,"/admin/agendar"
+                        ).permitAll()
+                        // Rotas de admin
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/Usuario/**").authenticated()
+                        // Rotas de cadastro
+                        .requestMatchers("/Cadastro/**").hasRole("ADMIN")
+                        // Rotas de conta (qualquer usuário autenticado)
+                        .requestMatchers("/conta/**").authenticated()
+                        // Qualquer outra rota precisa estar autenticada
+                        .anyRequest().authenticated()
+                )
+                // Stateless (JWT)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Adiciona filtro JWT antes do UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(internalKeyFilter(), UsernamePasswordAuthenticationFilter.class)
+                // Para poder abrir H2 console
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-                                        )
-                         .permitAll()
-                                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
-                                .requestMatchers("/Cadastro/**").hasAnyRole("ADMIN")
-                                .requestMatchers("/conta/**").authenticated()
-
-
-
-
-                                .anyRequest().authenticated()
-                        )
-                        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                        .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
-
-                                return http.build();
-
-
-
+        return http.build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",
                 "http://localhost:8080"
         ));
-
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 
@@ -78,5 +83,8 @@ public class SecurityConfig {
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
+    @Bean
+    public InternalKeyFilter internalKeyFilter() {
+        return new InternalKeyFilter();
+    }
 }
