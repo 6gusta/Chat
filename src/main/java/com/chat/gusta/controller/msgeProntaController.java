@@ -2,10 +2,10 @@ package com.chat.gusta.controller;
 
 
 import com.chat.gusta.model.MessagemPronta;
-import com.chat.gusta.repository.AdicionamsgeRepository;
-import com.chat.gusta.repository.MessageRepository;
-import com.chat.gusta.repository.ProntaReposiotory;
-import com.chat.gusta.service.MsgeProntaService;
+import com.chat.gusta.repository.MsgeProntas.MsgeProntasRepository;
+import com.chat.gusta.repository.MensagensRotas.MessageRepository;
+import com.chat.gusta.repository.MsgeProntas.ProntaReposiotory;
+import com.chat.gusta.service.MsgProntas.MsgeProntaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +18,11 @@ import java.util.Map;
 public class msgeProntaController {
 
     private  final MsgeProntaService msgeProntaService;
-    private final AdicionamsgeRepository adicionamsgeRepository;
+    private final MsgeProntasRepository msgeProntasRepository;
 
-    public msgeProntaController(MsgeProntaService msgeProntaService, ProntaReposiotory reposiotory, MessageRepository repository, AdicionamsgeRepository adicionamsgeRepository) {
+    public msgeProntaController(MsgeProntaService msgeProntaService, ProntaReposiotory reposiotory, MessageRepository repository, MsgeProntasRepository msgeProntasRepository) {
         this.msgeProntaService = msgeProntaService;
-        this.adicionamsgeRepository = adicionamsgeRepository;
+        this.msgeProntasRepository = msgeProntasRepository;
 
 
     }
@@ -41,7 +41,7 @@ public class msgeProntaController {
 
     @PostMapping("/cadastrar")
     public ResponseEntity<MessagemPronta> cadastrar(@RequestBody MessagemPronta messagemPronta){
-        MessagemPronta salva = adicionamsgeRepository.save(messagemPronta);
+        MessagemPronta salva = msgeProntasRepository.save(messagemPronta);
         return ResponseEntity.ok(salva);
     }
 

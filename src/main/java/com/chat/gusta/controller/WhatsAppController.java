@@ -1,11 +1,17 @@
 package com.chat.gusta.controller;
 
+
+import com.chat.gusta.model.Usuario.Cadastro;
 import com.chat.gusta.model.WhatsAppMessage;
-import com.chat.gusta.repository.MessageRepository;
-import com.chat.gusta.service.WhatsAppService;
+import com.chat.gusta.repository.Cadastro.CadastroRepository;
+import com.chat.gusta.repository.MensagensRotas.MessageRepository;
+
+import com.chat.gusta.service.RotasApi.WhatsAppServiceRotas;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,24 +23,29 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
+//@PreAuthorize("hasRole('ADMIN')")
 @RestController
-@RequestMapping("/whatsapp")
+@RequestMapping("/admin")
 @CrossOrigin(origins = {"http://localhost:4200", "http://127.0.0.1:4200"}, allowCredentials = "true")
 public class WhatsAppController {
 
-    private final WhatsAppService whatsAppService;
+    private final WhatsAppServiceRotas whatsAppService;
+    private final CadastroRepository cadastroRepository;
     private final MessageRepository messageRepository;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
-    public WhatsAppController(WhatsAppService whatsAppService, MessageRepository messageRepository) {
+
+    public WhatsAppController(WhatsAppServiceRotas whatsAppService, CadastroRepository cadastroRepository, MessageRepository messageRepository) {
         this.whatsAppService = whatsAppService;
+        this.cadastroRepository = cadastroRepository;
         this.messageRepository = messageRepository;
+
     }
 
     @PostMapping(value = "/agendar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> agendarMensagemMultipla(
             @RequestParam("numeros") String numerosJson,
+            @RequestParam("instance") String instance,
             @RequestParam("fromNumber") String fromNumber,
             @RequestParam("body") String body,
             @RequestParam(value = "horario", required = false)
@@ -95,7 +106,7 @@ public class WhatsAppController {
                         }
 
                         System.out.println("🚀 Disparando mensagem para " + toNumber);
-                        whatsAppService.sendMessage("T2", toNumber, body, recreatedImage);
+                        whatsAppService.sendMessage(instance, toNumber, body, recreatedImage);
                         messageRepository.save(mensagem);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -130,10 +141,19 @@ public class WhatsAppController {
             @RequestParam String fromNumber,
             @RequestParam(required = false) MultipartFile image
     ) throws IOException {
+
+        // 🔐 Pega usuário autenticado pelo token
+        Cadastro usuario = (Cadastro)
+                SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+
         WhatsAppMessage msg = new WhatsAppMessage();
+        msg.setUsuario(usuario); // 🔥 agora está correto
         msg.setFromNumber(fromNumber);
         msg.setToNumber(to);
         msg.setBody(message);
+        msg.setInstancia(instance); // ⚠️ importante se você usa instancia no filtro
 
         if (image != null && !image.isEmpty()) {
             msg.setImage(image.getBytes());
@@ -144,15 +164,11 @@ public class WhatsAppController {
 
         messageRepository.save(msg);
 
-
         return whatsAppService.sendMessage(instance, to, message, image);
     }
 
 
-    @GetMapping("/status/{instance}")
-    public String getStatus(@PathVariable String instance){
-        return whatsAppService.getStatus(instance);
-    }
+
 
 
     @GetMapping("/qrcode/{instance}")
@@ -169,27 +185,35 @@ public class WhatsAppController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> receberMensagem(@RequestBody WhatsAppMessage mensagem) {
-        System.out.println("Mensagem recebida do WhatsApp:");
+        Cadastro usuario = cadastroRepository.findById(1L).orElse(null);
+        System.out.println("✅ Mensagem recebida:");
         System.out.println("De: " + mensagem.getFromNumber());
         System.out.println("Corpo: " + mensagem.getBody());
+        mensagem.setUsuario(usuario);
         messageRepository.save(mensagem);
+
         return ResponseEntity.ok("Mensagem recebida com sucesso!");
     }
 
 
     @GetMapping("/messages")
     public List<WhatsAppMessage> listarMensagens() {
-        return messageRepository.findAll();
-    }
 
-    @GetMapping("/mensagens/{instancia}")
-    public List<WhatsAppMessage> listarPorInstancia(@PathVariable String instancia) {
-        return messageRepository.findByInstanciaIgnoreCase(instancia);
+        Cadastro usuario = (Cadastro)
+                SecurityContextHolder.getContext()
+                        .getAuthentication()
+                        .getPrincipal();
+
+        return messageRepository.findByUsuario_IdCadastro(usuario.getIdCadastro());
     }
 
     @GetMapping("/instancias")
     public List<String> listarInstancias() {
         return messageRepository.findDistinctInstancias();
     }
+
+
+
+
 
 }

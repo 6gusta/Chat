@@ -1,5 +1,8 @@
-package com.chat.gusta.service;
+package com.chat.gusta.service.RotasApi;
 
+
+import com.chat.gusta.model.InstanceStatus;
+import com.chat.gusta.model.InstanceStatusResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,12 +17,12 @@ import java.io.IOException;
 import java.util.Map;
 
 @Service
-public class WhatsAppService {
+public class WhatsAppServiceRotas {
 
     private final RestTemplate restTemplate;
     private final String baseUrl = "http://localhost:3000";
 
-    public WhatsAppService(RestTemplate restTemplate) {
+    public WhatsAppServiceRotas(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -70,10 +73,8 @@ public class WhatsAppService {
         }
     }
 
-    public String getStatus(String instance){
-        String url = baseUrl + "/status/" + instance;
-        return restTemplate.getForObject(url, String.class);
-    }
+
+
 
     public String getQrcode(String instance){
         String url = baseUrl + "/qrcode/" + instance;
@@ -85,9 +86,18 @@ public class WhatsAppService {
         return restTemplate.postForObject(url, null, String.class);
     }
 
-    public void processIncomingMessage(Map<String, Object> payload){
-        String from = (String) payload.get("from");
-        String body = (String) payload.get("body");
-        System.out.println("Mensagem recebida de " + from + ": " + body);
+    public InstanceStatusResponse getStatus(String instanceName) {
+        String url = baseUrl + "/status/" + instanceName;
+        return restTemplate.getForObject(url, InstanceStatusResponse.class);
     }
+
+
+    public InstanceStatus mapNodeStatus(InstanceStatusResponse response){
+        if (response == null) return InstanceStatus.OFFLINE;
+        return response.isWhatsappReady() ? InstanceStatus.CONNECTED: InstanceStatus.QR;
+    }
+
+
+
+
 }

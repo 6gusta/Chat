@@ -21,4 +21,5 @@ public class Contatos {
     private String nome;
 
     private String numero;
+    private String instancia;
 }

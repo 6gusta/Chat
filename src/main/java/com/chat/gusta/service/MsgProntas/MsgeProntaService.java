@@ -1,10 +1,10 @@
-package com.chat.gusta.service;
+package com.chat.gusta.service.MsgProntas;
 
 
 import com.chat.gusta.model.MessagemPronta;
-import com.chat.gusta.repository.ProntaReposiotory;
+import com.chat.gusta.repository.MsgeProntas.ProntaReposiotory;
 import org.springframework.stereotype.Service;
-import com.chat.gusta.repository.AdicionamsgeRepository;
+import com.chat.gusta.repository.MsgeProntas.MsgeProntasRepository;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import java.util.List;
 public class MsgeProntaService {
 
     private final ProntaReposiotory prontaReposiotory; // mensagens fixas
-    private final AdicionamsgeRepository repository;    // mensagens do banco
+    private final MsgeProntasRepository repository;    // mensagens do banco
 
-    public MsgeProntaService(ProntaReposiotory prontaReposiotory, AdicionamsgeRepository repository) {
+    public MsgeProntaService(ProntaReposiotory prontaReposiotory, MsgeProntasRepository repository) {
         this.prontaReposiotory = prontaReposiotory;
         this.repository = repository;
     }
